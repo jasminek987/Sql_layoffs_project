@@ -1,0 +1,135 @@
+-- exploratory data analysis
+
+select *
+from layoffs_staging2;
+
+select max(total_laid_off) , max(percentage_laid_off)
+from layoffs_staging2;
+
+select *
+from layoffs_staging2
+where percentage_laid_off=1 
+order by total_laid_off desc;
+
+select company, sum(total_laid_off)
+from layoffs_staging2
+group by company
+order by 2 desc;
+
+select min(`date`), max(`date`)
+from layoffs_staging2;
+
+select industry, sum(total_laid_off)
+from layoffs_staging2
+group by industry
+order by 2 desc;
+
+select country, sum(total_laid_off)
+from layoffs_staging2
+group by country
+order by 2 desc;
+
+select *
+from layoffs_staging2;
+
+select year(`date`), sum(total_laid_off)
+from layoffs_staging2
+group by year(`date`)
+order by 1 desc;
+
+select stage, sum(total_laid_off)
+from layoffs_staging2
+group by stage
+order by 2 desc;
+
+select substring(`date`,6,2) as `month` ,sum(total_laid_off)
+from layoffs_staging2
+where substring(`date`,6,2) is not null
+group by `month`
+order by 1 asc
+;
+
+with rolling_total as
+(
+select substring(`date`,1,7) as `month` ,sum(total_laid_off) as total_off
+from layoffs_staging2
+where substring(`date`,1,7) is not null
+group by `month`
+order by 1 asc
+)
+select `month` , total_off , sum(total_off) over(order by `month`) as rolling_totAL
+from rolling_total;
+
+with company_year (comany, years, total_laid_off)as
+(
+select company, year(`date`),sum(total_laid_off)
+from layoffs_staging2
+group by company, year(`date`)
+),
+company_year_rank as(
+select *, dense_rank() over(partition by years order by total_laid_off desc) as ranking
+from company_year
+where years is not null
+)
+select *
+from company_year_rank
+where ranking <=5
+;
+
+-- practice
+
+-- 1.Total layoffs by company — highest first
+
+select company , sum(total_laid_off) as total_layoff
+from layoffs_staging2
+group by company
+order by total_layoff desc;
+
+-- 2.The date range of the data — earliest and latest
+
+select min(`date`), max(`date`)
+from layoffs_staging2;
+
+-- 3.Total layoffs by year
+
+select year(`date`) as Year , sum(total_laid_off)
+from layoffs_staging2
+group by year(`date`)
+order by Year desc;
+
+-- 4.Companies that laid off 100% of their staff
+
+select *
+from layoffs_staging2
+where percentage_laid_off=1;
+
+-- 5.Top 3 companies by layoffs per year (dense_rank, partition by, CTE)
+
+with company_year as
+(
+select company, year(`date`) as years, sum(total_laid_off) as total
+from layoffs_staging2
+group by years , company
+
+)
+,
+company_year_rank as
+(
+select * , dense_rank() over( partition by years  order by total desc) as dept_rank
+from company_year
+where total is not null and years is not null
+)
+select *
+from company_year_rank
+where dept_rank <=3;
+
+-- 6.Rolling total of layoffs by month (running total)
+with rolling as (
+select substring(`date`, 1, 7) as month_layoff, sum(total_laid_off) as total_layoff
+from layoffs_staging2
+group by month_layoff
+order by month_layoff)
+select month_layoff, total_layoff, sum(total_layoff) over(order by month_layoff) as rolling_total
+from rolling;
+
+
