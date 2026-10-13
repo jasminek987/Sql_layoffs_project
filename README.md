@@ -29,8 +29,8 @@ MySQL, MySQL Workbench
 - Rolling monthly total of layoffs (window function)
 
 ## Key Findings
-1. 18150 had the highest total layoffs at Amazon employees.
-2. 2022 was the worst year, with 161711 layoffs.
+1. Amazon had the highest total layoffs at 18,150 employees.
+2. 2022 was the worst year, with 161,711 layoffs.
 3. 116 companies shut down entirely.
 
 ## Files
