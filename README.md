@@ -9,7 +9,7 @@ layoffs changed over time, and which companies shut down
 completely.
 
 ## Dataset
-Global tech layoffs, ____ rows, covering ____ to ____.
+Global tech layoffs, 1999 rows, covering 2020-03-11 to 2023-03-06.
 
 ## Tools
 MySQL, MySQL Workbench
@@ -28,6 +28,11 @@ MySQL, MySQL Workbench
 - Top 3 companies by layoffs per year (DENSE_RANK + CTEs)
 - Rolling monthly total of layoffs (window function)
 
+## Key Findings
+1. 18150 had the highest total layoffs at Amazon employees.
+2. 2022 was the worst year, with 161711 layoffs.
+3. 116 companies shut down entirely.
+
 ## Files
-- `data_cleaning.sql`
-- `eda.sql`
+- `Data_cleaning.sql`
+- `Eda.sql`
